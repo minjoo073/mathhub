@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>수와 연산 — MathHub</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      color: #1a1a2e;
+      background: #f8f9fc;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #e8eaf6;
+      box-shadow: 0 1px 4px rgba(92,107,192,.08);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      gap: 32px;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #3949AB;
+      letter-spacing: -.5px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      list-style: none;
+    }
+    .nav-links a {
+      display: block;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: .92rem;
+      font-weight: 500;
+      color: #555;
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .nav-links a:hover { background: #e8eaf6; color: #3949AB; }
+    .nav-links a.active {
+      background: #e8eaf6;
+      color: #3949AB;
+      font-weight: 700;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #3949AB 0%, #7c3aed 100%);
+      padding: 52px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 1rem;
+      opacity: .85;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .page-body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 76px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: #c5cae9; border-radius: 4px; }
+
+    .grade-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      background: #3949AB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: .92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      text-align: center;
+      letter-spacing: -.2px;
+    }
+
+    .accordion { list-style: none; }
+    .accordion-item { border-radius: 8px; overflow: hidden; margin-bottom: 4px; }
+
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 600;
+      color: #333;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e8eaf6;
+      user-select: none;
+      transition: background .15s;
+    }
+    .accordion-header:hover { background: #f0f1fe; }
+    .accordion-header.open { color: #3949AB; background: #eef0fb; border-color: #c5cae9; }
+
+    .chevron {
+      font-size: .75rem;
+      transition: transform .2s;
+      color: #888;
+      flex-shrink: 0;
+    }
+    .accordion-header.open .chevron { transform: rotate(90deg); color: #3949AB; }
+
+    .sub-list {
+      display: none;
+      list-style: none;
+      padding: 4px 0 6px 0;
+      background: #fff;
+      border: 1px solid #e8eaf6;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+    }
+    .sub-list.open { display: block; }
+
+    .sub-item {
+      padding: 7px 12px 7px 20px;
+      font-size: .85rem;
+      color: #555;
+      cursor: pointer;
+      border-radius: 6px;
+      margin: 2px 6px;
+      transition: background .12s;
+      display: flex;
+      gap: 6px;
+    }
+    .sub-item:hover { background: #f0f1fe; color: #3949AB; }
+    .sub-item.selected {
+      background: #e8eaf6;
+      color: #3949AB;
+      font-weight: 700;
+    }
+    .sub-num { color: #9fa8da; font-size: .8rem; flex-shrink: 0; margin-top: 1px; }
+    .sub-item.selected .sub-num { color: #5C6BC0; }
+
+    /* ── CONTENT ── */
+    .content { flex: 1; min-width: 0; }
+
+    .breadcrumb {
+      font-size: .82rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    .breadcrumb span { color: #bbb; margin: 0 5px; }
+
+    .section-header { margin-bottom: 28px; }
+    .section-header h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1a1a2e;
+      letter-spacing: -.5px;
+      margin-bottom: 6px;
+    }
+    .section-header p { font-size: .95rem; color: #666; }
+
+    /* ── CONCEPT BLOCK ── */
+    .concept-block {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e8eaf6;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .concept-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .concept-num {
+      background: #3949AB;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: .3px;
+      flex-shrink: 0;
+    }
+    .concept-block h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .concept-label {
+      font-size: .82rem;
+      color: #888;
+      margin-bottom: 16px;
+    }
+
+    .bullet-list { list-style: none; margin-bottom: 14px; }
+    .bullet-list li {
+      position: relative;
+      padding-left: 16px;
+      font-size: .93rem;
+      color: #333;
+      line-height: 1.65;
+      margin-bottom: 5px;
+    }
+    .bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #5C6BC0;
+      font-size: 1rem;
+    }
+
+    .important-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      border-radius: 20px;
+      font-size: .82rem;
+      font-weight: 700;
+      padding: 4px 13px;
+      margin-bottom: 18px;
+    }
+
+    /* ── EXAMPLE BOX ── */
+    .example-box {
+      background: #f0f4ff;
+      border-left: 3px solid #5C6BC0;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .example-box .ex-title {
+      font-size: .78rem;
+      font-weight: 800;
+      color: #5C6BC0;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 8px;
+    }
+    .example-box .ex-q {
+      font-size: .92rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 10px;
+    }
+    .example-box .ex-body {
+      font-size: .9rem;
+      color: #444;
+      line-height: 1.7;
+    }
+    .example-box .ex-body ul { list-style: none; padding-left: 4px; }
+    .example-box .ex-body ul li { margin-bottom: 2px; }
+    .example-box .ex-body ul li::before { content: '— '; color: #9fa8da; }
+
+    /* ── PRACTICE BOX ── */
+    .practice-box {
+      background: #fff;
+      border: 1px solid #c5cae9;
+      border-left: 4px solid #5C6BC0;
+      border-radius: 0 8px 8px 0;
+      padding: 18px 18px 14px;
+    }
+    .practice-badge {
+      display: inline-block;
+      background: #3949AB;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 800;
+      padding: 3px 11px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      letter-spacing: .3px;
+    }
+    .practice-q {
+      font-size: .93rem;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .practice-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .opt {
+      background: #f0f1fe;
+      color: #3949AB;
+      border: 1px solid #c5cae9;
+      border-radius: 8px;
+      padding: 5px 18px;
+      font-size: .9rem;
+      font-weight: 600;
+    }
+
+    .collapsible-toggle {
+      background: none;
+      border: none;
+      color: #5C6BC0;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .15s;
+    }
+    .collapsible-toggle:hover { color: #3949AB; }
+    .toggle-arrow {
+      display: inline-block;
+      transition: transform .25s;
+      font-style: normal;
+    }
+    .collapsible-toggle.open .toggle-arrow { transform: rotate(180deg); }
+
+    .collapsible-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, opacity .25s ease;
+      opacity: 0;
+    }
+    .collapsible-body.open {
+      max-height: 300px;
+      opacity: 1;
+    }
+    .solution-inner {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e8eaf6;
+      font-size: .9rem;
+      color: #333;
+      line-height: 1.75;
+    }
+    .solution-inner strong { color: #3949AB; }
+    .solution-inner ul { list-style: none; padding-left: 4px; }
+    .solution-inner ul li { margin-bottom: 3px; }
+    .solution-inner ul li::before { content: '• '; color: #9fa8da; }
+
+    /* ── DIVIDER ── */
+    .concept-divider {
+      border: none;
+      border-top: 1px solid #e8eaf6;
+      margin: 0;
+    }
+
+    /* ── SCROLL TO TOP ── */
+    #scrollTop {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 44px;
+      height: 44px;
+      background: #3949AB;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(57,73,171,.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 99;
+    }
+    #scrollTop.visible { opacity: 1; pointer-events: auto; }
+    #scrollTop:hover { transform: translateY(-2px); background: #303f9f; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #3949AB;
+      color: #fff;
+      padding: 40px 24px 28px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      list-style: none;
+      margin-bottom: 24px;
+    }
+    .footer-links a {
+      color: #c5cae9;
+      text-decoration: none;
+      font-size: .85rem;
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: .82rem;
+      color: #9fa8da;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .footer-flags { font-size: 1.15rem; letter-spacing: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">MathHub</a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">개념 완성</a></li>
+      <li><a href="#">기출 문제</a></li>
+      <li><a href="#">문제집 &amp; 해설</a></li>
+      <li><a href="#">국가별 과정</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <h1>개념이 잡히면, 문제는 풀립니다</h1>
+  <p>기출과 연결된 핵심 개념을 빠르게 정리해보세요.</p>
+</section>
+
+<!-- ═══════════════ PAGE BODY ═══════════════ -->
+<div class="page-body">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <button class="grade-btn">중학교 1학년</button>
+
+    <ul class="accordion">
+
+      <!-- 수와 연산 — expanded -->
+      <li class="accordion-item">
+        <div class="accordion-header open" onclick="toggleAccordion(this)">
+          <span>수와 연산</span>
+          <span class="chevron">▶</span>
+        </div>
+        <ul class="sub-list open">
+          <li class="sub-item selected"><span class="sub-num">1.</span><span>소수와 합성수</span></li>
+          <li class="sub-item"><span class="sub-num">2.</span><span>소인수분해</span></li>
+          <li class="sub-item"><span class="sub-num">3.</span><span>최대공약수와 최소공배수</span></li>
+          <li class="sub-item"><span class="sub-num">4.</span><span>정수와 유리수</span></li>
+          <li class="sub-item"><span class="sub-num">5.</span><span>절댓값과 대소관계</span></li>
+          <li class="sub-item"><span class="sub-num">6.</span><span>정수와 유리수의 사칙연산</span></li>
+        </ul>
+      </li>
+
+      <!-- 문자와 식 — collapsed -->
+      <li class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>문자와 식</span>
+          <span class="chevron">▶</span>
+        </div>
+        <ul class="sub-list"></ul>
+      </li>
+
+      <!-- 일차방정식 — collapsed -->
+      <li class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>일차방정식</span>
+          <span class="chevron">▶</span>
+        </div>
+        <ul class="sub-list"></ul>
+      </li>
+
+      <!-- 좌표와 그래프 — collapsed -->
+      <li class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+          <span>좌표와 그래프</span>
+          <span class="chevron">▶</span>
+        </div>
+        <ul class="sub-list"></ul>
+      </li>
+
+    </ul>
+  </aside>
+
+  <!-- ── CONTENT ── -->
+  <main class="content">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      중학수학<span>›</span>중학교 1학년<span>›</span>수와 연산
+    </nav>
+
+    <!-- Section Header -->
+    <div class="section-header">
+      <h2>수와 연산</h2>
+      <p>정수와 유리수의 개념을 이해하고, 사칙연산을 완벽히 익혀보세요.</p>
+    </div>
+
+    <!-- ═══ CONCEPT 1 ═══ -->
+    <div class="concept-block">
+      <div class="concept-title-row">
+        <span class="concept-num">개념 1</span>
+        <h3>소수와 합성수</h3>
+      </div>
+      <p class="concept-label">자연수를 약수의 개수에 따라 분류하고 거듭제곱 표현 익히기</p>
+
+      <ul class="bullet-list">
+        <li><strong>소수</strong>: 약수가 1과 자기 자신뿐인 수 (예: 2, 3, 5, 7, 11…)</li>
+        <li><strong>합성수</strong>: 약수가 3개 이상인 수 (예: 4, 6, 8, 9…)</li>
+        <li><strong>거듭제곱</strong>: aⁿ은 a를 n번 곱하는 것, a를 밑(base)이라 함</li>
+      </ul>
+
+      <span class="important-badge">⚠ 1은 소수도 합성수도 아님</span>
+
+      <!-- 예제 -->
+      <div class="example-box">
+        <div class="ex-title">예제</div>
+        <div class="ex-q">10 이하의 자연수 중 소수와 합성수 구분하기</div>
+        <div class="ex-body">
+          <ul>
+            <li>1 → (둘 다 아님)</li>
+            <li>2, 3, 5, 7 → 약수가 2개 → <strong>소수</strong></li>
+            <li>4, 6, 8, 9, 10 → 약수가 3개 이상 → <strong>합성수</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 연습문제 -->
+      <div class="practice-box">
+        <span class="practice-badge">연습</span>
+        <p class="practice-q">다음 중 소수가 아닌 것을 모두 고르시오.</p>
+        <div class="practice-options">
+          <span class="opt">2</span>
+          <span class="opt">13</span>
+          <span class="opt">21</span>
+          <span class="opt">31</span>
+          <span class="opt">39</span>
+        </div>
+        <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+          풀이 및 정답 보기 <i class="toggle-arrow">▾</i>
+        </button>
+        <div class="collapsible-body">
+          <div class="solution-inner">
+            <strong>정답: 21, 39</strong>
+            <ul>
+              <li>21: 약수가 1, 3, 7, 21 → 합성수</li>
+              <li>39: 약수가 1, 3, 13, 39 → 합성수</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CONCEPT 2 ═══ -->
+    <div class="concept-block">
+      <div class="concept-title-row">
+        <span class="concept-num">개념 2</span>
+        <h3>소인수분해</h3>
+      </div>
+      <p class="concept-label">합성수를 소수들의 곱으로 분해하여 수의 구조 파악하기</p>
+
+      <ul class="bullet-list">
+        <li><strong>소인수분해</strong>: 1보다 큰 자연수를 소수들의 곱으로만 나타내는 것</li>
+      </ul>
+
+      <!-- 예제 -->
+      <div class="example-box">
+        <div class="ex-title">예제</div>
+        <div class="ex-q">24를 소인수분해하기</div>
+        <div class="ex-body">
+          24 = 2 × 12 = 2 × 2 × 6 = 2 × 2 × 2 × 3 = <strong>2³ × 3</strong>
+        </div>
+      </div>
+
+      <!-- 연습문제 -->
+      <div class="practice-box">
+        <span class="practice-badge">연습</span>
+        <p class="practice-q">45를 소인수분해하고, 소인수를 모두 적으시오.</p>
+        <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+          풀이 및 정답 보기 <i class="toggle-arrow">▾</i>
+        </button>
+        <div class="collapsible-body">
+          <div class="solution-inner">
+            45 = <strong>3² × 5</strong><br>
+            소인수: <strong>3, 5</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CONCEPT 3 ═══ -->
+    <div class="concept-block">
+      <div class="concept-title-row">
+        <span class="concept-num">개념 3</span>
+        <h3>최대공약수와 최소공배수</h3>
+      </div>
+      <p class="concept-label">소인수분해를 통해 공통된 인수 찾기</p>
+
+      <ul class="bullet-list">
+        <li><strong>최대공약수</strong>: 공통 소인수 중 지수가 작거나 같은 것을 골라 곱함</li>
+        <li><strong>최소공배수</strong>: 모든 소인수 중 지수가 크거나 같은 것을 골라 곱함</li>
+      </ul>
+
+      <!-- 예제 -->
+      <div class="example-box">
+        <div class="ex-title">예제</div>
+        <div class="ex-q">12(2² × 3)와 30(2 × 3 × 5)의 관계</div>
+        <div class="ex-body">
+          <ul>
+            <li>최대공약수: 공통인 2와 3 중 낮은 지수 선택 → 2 × 3 = <strong>6</strong></li>
+            <li>최소공배수: 모든 인수 2, 3, 5 중 높은 지수 선택 → 2² × 3 × 5 = <strong>60</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 연습문제 -->
+      <div class="practice-box">
+        <span class="practice-badge">연습</span>
+        <p class="practice-q">두 수 2³ × 3 과 2² × 3² 의 최대공약수와 최소공배수를 각각 구하시오.</p>
+        <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+          풀이 및 정답 보기 <i class="toggle-arrow">▾</i>
+        </button>
+        <div class="collapsible-body">
+          <div class="solution-inner">
+            <ul>
+              <li>최대공약수: 2² × 3 = <strong>12</strong></li>
+              <li>최소공배수: 2³ × 3² = <strong>72</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════ SCROLL TO TOP ═══════════════ -->
+<button id="scrollTop" aria-label="맨 위로" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">MathHub</span>
+    <ul class="footer-links">
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Terms of Service</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Support Us</a></li>
+    </ul>
+    <div class="footer-bottom">
+      <span>© 2026 MathHub. All rights reserved.</span>
+      <span class="footer-flags">🇰🇷🇺🇸🇬🇧🇨🇦</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Accordion ── */
+  function toggleAccordion(header) {
+    const subList = header.nextElementSibling;
+    const isOpen = header.classList.contains('open');
+    header.classList.toggle('open', !isOpen);
+    subList.classList.toggle('open', !isOpen);
+  }
+
+  /* ── Collapsible solution ── */
+  function toggleCollapsible(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    btn.classList.toggle('open', !isOpen);
+    body.classList.toggle('open', !isOpen);
+  }
+
+  /* ── Scroll to top visibility ── */
+  const scrollBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    scrollBtn.classList.toggle('visible', window.scrollY > 280);
+  });
+</script>
+
+</body>
+</html>
