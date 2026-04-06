@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathHub – 세계 수학 기출문제 라이브러리</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR',
+                   'Apple SD Gothic Neo', sans-serif;
+      color: #1a1a2e;
+      background: #fff;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; }
+
+    /* ── Variables ── */
+    :root {
+      --indigo:   #5C6BC0;
+      --indigo-d: #3949AB;
+      --indigo-dd:#283593;
+      --bg-hero:  #EEF0FB;
+      --bg-light: #E8EAF6;
+      --bg-dark:  #1a1c2e;
+      --shadow:   0 4px 20px rgba(92,107,192,.15);
+      --radius:   14px;
+      --transition: .22s ease;
+    }
+
+    /* ── Utility ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-tag {
+      display: inline-block;
+      background: var(--bg-light);
+      color: var(--indigo);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       HEADER / NAV
+    ══════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      border-bottom: 1px solid #e8eaf0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--indigo);
+      letter-spacing: -.5px;
+    }
+    .nav-logo span { color: var(--indigo-d); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .93rem;
+      font-weight: 500;
+      color: #444;
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--indigo);
+      border-radius: 2px;
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--indigo); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--indigo);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background var(--transition), transform var(--transition) !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover {
+      background: var(--indigo-d) !important;
+      transform: translateY(-1px);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: #444; border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      background: var(--bg-hero);
+      padding: 80px 0 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Scattered math symbols */
+    .hero-symbols {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+    .hero-symbols span {
+      position: absolute;
+      font-size: 1.6rem;
+      color: #c5cae9;
+      font-weight: 700;
+      opacity: .7;
+      animation: float 6s ease-in-out infinite;
+    }
+    .hero-symbols span:nth-child(1)  { top: 8%;  left: 5%;  font-size: 2rem;  animation-delay: 0s; }
+    .hero-symbols span:nth-child(2)  { top: 18%; left: 12%; font-size: 1.2rem; animation-delay: 1s; }
+    .hero-symbols span:nth-child(3)  { top: 55%; left: 6%;  font-size: 1.8rem; animation-delay: 2s; }
+    .hero-symbols span:nth-child(4)  { top: 72%; left: 14%; font-size: 1rem;  animation-delay: .5s; }
+    .hero-symbols span:nth-child(5)  { top: 10%; left: 88%; font-size: 2.2rem; animation-delay: 1.5s; }
+    .hero-symbols span:nth-child(6)  { top: 35%; left: 92%; font-size: 1.3rem; animation-delay: 3s; }
+    .hero-symbols span:nth-child(7)  { top: 65%; left: 90%; font-size: 1.7rem; animation-delay: .8s; }
+    .hero-symbols span:nth-child(8)  { top: 82%; left: 82%; font-size: 1rem;  animation-delay: 2.2s; }
+    .hero-symbols span:nth-child(9)  { top: 30%; left: 2%;  font-size: 1.4rem; animation-delay: 3.5s; }
+    .hero-symbols span:nth-child(10) { top: 88%; left: 42%; font-size: 1.1rem; animation-delay: 1.8s; }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-12px) rotate(8deg); }
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--indigo);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero-heading {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--indigo-dd);
+      margin-bottom: 20px;
+    }
+    .hero-heading .accent { color: var(--indigo); }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: #4a5180;
+      margin-bottom: 36px;
+      max-width: 500px;
+    }
+
+    /* Search bar */
+    .hero-search {
+      display: flex;
+      background: #fff;
+      border-radius: 50px;
+      box-shadow: 0 4px 24px rgba(92,107,192,.18);
+      overflow: hidden;
+      max-width: 560px;
+      border: 2px solid transparent;
+      transition: border-color var(--transition);
+    }
+    .hero-search:focus-within { border-color: var(--indigo); }
+    .hero-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 16px 22px;
+      font-size: .98rem;
+      color: #333;
+      background: transparent;
+    }
+    .hero-search input::placeholder { color: #9fa8c4; }
+    .hero-search button {
+      background: var(--indigo);
+      color: #fff;
+      border: none;
+      padding: 0 28px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-search button:hover { background: var(--indigo-d); }
+
+    /* Curriculum badges */
+    .curriculum-badges {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .curriculum-badges .label {
+      font-size: .8rem;
+      color: #7986b8;
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1.5px solid #dde1f5;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--indigo-d);
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+    .badge:hover {
+      border-color: var(--indigo);
+      box-shadow: 0 2px 10px rgba(92,107,192,.2);
+      transform: translateY(-2px);
+    }
+    .badge .badge-icon {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+    }
+    .badge-ap    .badge-icon { background: #1565c0; color: #fff; font-weight: 900; }
+    .badge-sat   .badge-icon { background: #e53935; color: #fff; font-weight: 900; }
+    .badge-suneung .badge-icon { background: #388e3c; color: #fff; }
+    .badge-naesin  .badge-icon { background: #f57c00; color: #fff; }
+    .badge-canada  .badge-icon { background: #c62828; color: #fff; }
+
+    /* Hero illustration */
+    .hero-illustration {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-card-stack {
+      position: relative;
+      width: 340px;
+      height: 340px;
+    }
+    .hero-card-bg {
+      position: absolute;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #7986cb, #5c6bc0);
+      box-shadow: 0 12px 40px rgba(92,107,192,.35);
+    }
+    .hero-card-bg.c1 { inset: 30px 0 0 30px; transform: rotate(6deg); opacity: .4; }
+    .hero-card-bg.c2 { inset: 20px 10px 10px 20px; transform: rotate(3deg); opacity: .6; }
+    .hero-card-main {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.12);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid #f0f0f8;
+    }
+    .hero-card-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7986cb, #5c6bc0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .hero-card-title { font-weight: 700; font-size: .95rem; color: #1a1a2e; }
+    .hero-card-sub   { font-size: .78rem; color: #888; }
+    .hero-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hero-stat {
+      background: var(--bg-hero);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .hero-stat-num  { font-size: 1.3rem; font-weight: 800; color: var(--indigo); }
+    .hero-stat-label { font-size: .72rem; color: #666; margin-top: 2px; }
+    .hero-progress { margin-top: 4px; }
+    .hero-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: .78rem; color: #666; margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #e8eaf6;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--indigo), #7986cb);
+      transition: width 1.2s ease;
+    }
+    .hero-tags {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;
+    }
+    .hero-tag {
+      background: var(--bg-light);
+      color: var(--indigo);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    /* ══════════════════════════════════════
+       CURRICULUM SECTION
+    ══════════════════════════════════════ */
+    .curriculum {
+      padding: 90px 0;
+      background: #fff;
+    }
+    .curriculum-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .curriculum-header h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 900;
+      color: #1a1a2e;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .curriculum-header p {
+      font-size: 1rem;
+      color: #666;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .curriculum-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .curr-card {
+      border: 1.5px solid #e8eaf0;
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all var(--transition);
+      cursor: pointer;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .curr-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--indigo), #7986cb);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .curr-card:hover {
+      border-color: var(--indigo);
+      box-shadow: 0 8px 32px rgba(92,107,192,.15);
+      transform: translateY(-4px);
+    }
+    .curr-card:hover::before { transform: scaleX(1); }
+    .curr-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .curr-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .curr-flag { font-size: 1.8rem; }
+    .curr-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .curr-link-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--bg-light);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--indigo);
+      font-size: 1rem;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .curr-card:hover .curr-link-icon {
+      background: var(--indigo);
+      color: #fff;
+      transform: rotate(-45deg);
+    }
+    .curr-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .curr-col-title {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--indigo);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .curr-col-title svg { flex-shrink: 0; }
+    .curr-items li {
+      font-size: .83rem;
+      color: #555;
+      padding: 4px 0;
+      border-bottom: 1px solid #f4f4f8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .curr-items li::before {
+      content: '›';
+      color: var(--indigo);
+      font-weight: 700;
+    }
+    .curr-items li:last-child { border-bottom: none; }
+
+    /* ══════════════════════════════════════
+       FEATURES SECTION
+    ══════════════════════════════════════ */
+    .features {
+      background: var(--bg-hero);
+      padding: 90px 0;
+    }
+    .features-top {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .features-top h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 900;
+      color: #1a1a2e;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .features-top p { font-size: 1rem; color: #666; }
+
+    .features-inner {
+      display: grid;
+      grid-template-columns: 1fr 460px;
+      gap: 60px;
+      align-items: center;
+    }
+    .feature-list { display: flex; flex-direction: column; gap: 0; }
+    .feature-item {
+      padding: 28px;
+      border-radius: var(--radius);
+      transition: all var(--transition);
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      position: relative;
+    }
+    .feature-item.active,
+    .feature-item:hover {
+      background: #fff;
+      border-color: #dde1f5;
+      box-shadow: var(--shadow);
+    }
+    .feature-item-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .feature-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--indigo), #7986cb);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .feature-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+    .feature-desc {
+      font-size: .87rem;
+      color: #666;
+      margin-bottom: 12px;
+      margin-left: 58px;
+    }
+    .feature-bullets {
+      margin-left: 58px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .feature-bullets li {
+      font-size: .83rem;
+      color: var(--indigo);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feature-bullets li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--indigo);
+      flex-shrink: 0;
+    }
+
+    /* Tablet mockup */
+    .device-mockup {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+    .tablet-frame {
+      width: 420px;
+      background: #1a1c2e;
+      border-radius: 28px;
+      padding: 14px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25), 0 0 0 2px #2a2c3e;
+      position: relative;
+    }
+    .tablet-screen {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 300px;
+    }
+    .tablet-bar {
+      background: var(--bg-hero);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #e8eaf0;
+    }
+    .tablet-dots span {
+      display: inline-block;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .tablet-dots span:nth-child(1) { background: #ff5f57; }
+    .tablet-dots span:nth-child(2) { background: #febc2e; }
+    .tablet-dots span:nth-child(3) { background: #28c840; }
+    .tablet-url-bar {
+      flex: 1;
+      background: #fff;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: .73rem;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tablet-content { padding: 20px 16px; }
+    .tablet-subject-row {
+      display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .t-subj {
+      background: var(--bg-light);
+      color: var(--indigo);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .t-subj.active { background: var(--indigo); color: #fff; }
+    .tablet-paper-list { display: flex; flex-direction: column; gap: 10px; }
+    .t-paper {
+      background: #f7f8fe;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #eaecf8;
+    }
+    .t-paper-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--indigo), #7986cb);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+    .t-paper-info { flex: 1; }
+    .t-paper-name { font-size: .83rem; font-weight: 700; color: #1a1a2e; }
+    .t-paper-meta { font-size: .73rem; color: #888; margin-top: 2px; }
+    .t-paper-dl {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: var(--indigo);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .t-paper-dl:hover { background: var(--indigo-d); }
+    .tablet-side-tag {
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      background: var(--indigo);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 0 0 6px 6px;
+      letter-spacing: .06em;
+    }
+
+    /* ══════════════════════════════════════
+       TESTIMONIALS
+    ══════════════════════════════════════ */
+    .testimonials {
+      padding: 90px 0;
+      background: #fff;
+    }
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .testimonials-header h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 900;
+      color: #1a1a2e;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .testimonials-header p { font-size: 1rem; color: #666; }
+    .testimonials-track-wrapper {
+      overflow: hidden;
+      position: relative;
+    }
+    .testimonials-track-wrapper::before,
+    .testimonials-track-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .testimonials-track-wrapper::before {
+      left: 0;
+      background: linear-gradient(to right, #fff, transparent);
+    }
+    .testimonials-track-wrapper::after {
+      right: 0;
+      background: linear-gradient(to left, #fff, transparent);
+    }
+    .testimonials-track {
+      display: flex;
+      gap: 20px;
+      animation: scroll-track 28s linear infinite;
+      width: max-content;
+    }
+    .testimonials-track:hover { animation-play-state: paused; }
+    @keyframes scroll-track {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .testi-card {
+      background: #fff;
+      border: 1.5px solid #e8eaf0;
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 280px;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+    .testi-card:hover {
+      border-color: var(--indigo);
+      box-shadow: var(--shadow);
+      transform: translateY(-3px);
+    }
+    .testi-stars { color: #f59e0b; font-size: .9rem; margin-bottom: 10px; }
+    .testi-text {
+      font-size: .87rem;
+      color: #444;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .testi-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .testi-name  { font-size: .85rem; font-weight: 700; color: #1a1a2e; }
+    .testi-role  { font-size: .75rem; color: #888; }
+
+    /* ══════════════════════════════════════
+       STATS BANNER
+    ══════════════════════════════════════ */
+    .stats-banner {
+      background: linear-gradient(135deg, var(--indigo-d), var(--indigo));
+      padding: 56px 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-item { color: #fff; }
+    .stat-number {
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: .9rem;
+      opacity: .8;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: var(--bg-dark);
+      color: #c5cae9;
+      padding: 56px 0 28px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 260px 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #2a2c3e;
+      margin-bottom: 28px;
+    }
+    .footer-brand .nav-logo { color: #7986cb; margin-bottom: 12px; display: block; }
+    .footer-desc { font-size: .87rem; color: #7986cb; line-height: 1.7; margin-bottom: 16px; }
+    .footer-flags { display: flex; gap: 10px; font-size: 1.4rem; }
+    .footer-col-title {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-size: .87rem;
+      color: #7986cb;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: #4a5180;
+    }
+    .footer-bottom-links { display: flex; gap: 20px; }
+    .footer-bottom-links a { color: #4a5180; transition: color var(--transition); }
+    .footer-bottom-links a:hover { color: #7986cb; }
+
+    /* ══════════════════════════════════════
+       SCROLL-REVEAL ANIMATIONS
+    ══════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-illustration { display: none; }
+      .curriculum-grid { grid-template-columns: 1fr; }
+      .features-inner { grid-template-columns: 1fr; }
+      .device-mockup { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .footer-top > :first-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        background: #fff;
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid #e8eaf0;
+        box-shadow: 0 8px 20px rgba(0,0,0,.1);
+      }
+      .nav-hamburger { display: flex; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .curr-cols { grid-template-columns: 1fr; }
+      .hero-search button span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER / NAV
+══════════════════════════════════════ -->
+<header>
+  <nav class="container">
+    <a href="#" class="nav-logo">Math<span>Hub</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="concept.html">개념 완성</a></li>
+      <li><a href="#features">기출 문제</a></li>
+      <li><a href="#features">문제집 & 해설</a></li>
+      <li><a href="#curriculum">국가별 과정</a></li>
+      <li><a href="#" class="nav-cta">무료 시작</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger" aria-label="메뉴 열기" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-symbols" aria-hidden="true">
+    <span>×</span><span>∑</span><span>÷</span><span>≠</span>
+    <span>+</span><span>∫</span><span>π</span><span>√</span>
+    <span>≈</span><span>∞</span>
+  </div>
+  <div class="container">
+    <div class="hero-inner">
+      <!-- Left content -->
+      <div class="hero-content">
+        <p class="hero-eyebrow">🌍 세계 수학 자료 플랫폼</p>
+        <h1 class="hero-heading">
+          세계 수학 기출문제<br />
+          <span class="accent">라이브러리</span>
+        </h1>
+        <p class="hero-sub">
+          다양한 기출문제와 교재를 빠르게 찾아보고 다운로드하세요
+        </p>
+
+        <form class="hero-search" onsubmit="handleSearch(event)">
+          <input
+            type="text"
+            id="heroSearchInput"
+            placeholder="ex) AP Calculus / 필두어"
+            aria-label="검색어 입력"
+          />
+          <button type="submit">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span>검색</span>
+          </button>
+        </form>
+
+        <div class="curriculum-badges">
+          <span class="label">커리큘럼:</span>
+          <div class="badge badge-canada"><span class="badge-icon">🍁</span> Canada</div>
+          <div class="badge badge-sat"><span class="badge-icon">S</span> SAT</div>
+          <div class="badge badge-ap"><span class="badge-icon">AP</span> AP</div>
+          <div class="badge badge-suneung"><span class="badge-icon">수</span> 수능</div>
+          <div class="badge badge-naesin"><span class="badge-icon">내</span> 내신</div>
+        </div>
+      </div>
+
+      <!-- Right illustration card -->
+      <div class="hero-illustration">
+        <div class="hero-card-stack">
+          <div class="hero-card-bg c1"></div>
+          <div class="hero-card-bg c2"></div>
+          <div class="hero-card-main">
+            <div class="hero-card-header">
+              <div class="hero-card-avatar">📚</div>
+              <div>
+                <div class="hero-card-title">MathHub 대시보드</div>
+                <div class="hero-card-sub">학습 현황 요약</div>
+              </div>
+            </div>
+            <div class="hero-stat-row">
+              <div class="hero-stat">
+                <div class="hero-stat-num" data-count="4500">0</div>
+                <div class="hero-stat-label">기출 문제</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-num" data-count="32">0</div>
+                <div class="hero-stat-label">국가·시험</div>
+              </div>
+            </div>
+            <div class="hero-progress">
+              <div class="hero-progress-label">
+                <span>AP Calculus BC</span><span>78%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:0%" data-target="78"></div></div>
+              <div class="hero-progress-label">
+                <span>SAT Math</span><span>64%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:0%" data-target="64"></div></div>
+            </div>
+            <div class="hero-tags">
+              <span class="hero-tag">AP</span>
+              <span class="hero-tag">SAT</span>
+              <span class="hero-tag">IB</span>
+              <span class="hero-tag">수능</span>
+              <span class="hero-tag">AMC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CURRICULUM SELECTION
+══════════════════════════════════════ -->
+<section class="curriculum" id="curriculum">
+  <div class="container">
+    <div class="curriculum-header reveal">
+      <span class="section-tag">Curriculum</span>
+      <h2>원하는 수학 커리큘럼을<br />선택하세요!</h2>
+      <p>국가 및 시험별로 정리된 기출문제와 교재를 확인할 수 있습니다</p>
+    </div>
+
+    <div class="curriculum-grid">
+      <!-- USA -->
+      <div class="curr-card reveal reveal-delay-1">
+        <div class="curr-card-head">
+          <div class="curr-card-title">
+            <span class="curr-flag">🇺🇸</span>
+            <span class="curr-name">USA</span>
+          </div>
+          <div class="curr-link-icon">↗</div>
+        </div>
+        <div class="curr-cols">
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Past Papers &amp; Exams
+            </div>
+            <ul class="curr-items">
+              <li>AP Math Practice</li>
+              <li>AP Calculus AB/BC</li>
+              <li>Algebra I &amp; II</li>
+              <li>Statistics</li>
+            </ul>
+          </div>
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Textbooks
+            </div>
+            <ul class="curr-items">
+              <li>Pre-Algebra</li>
+              <li>Precalculus</li>
+              <li>Trigonometry</li>
+              <li>AP Lifenus Micro</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- United Kingdom -->
+      <div class="curr-card reveal reveal-delay-2">
+        <div class="curr-card-head">
+          <div class="curr-card-title">
+            <span class="curr-flag">🇬🇧</span>
+            <span class="curr-name">United Kingdom</span>
+          </div>
+          <div class="curr-link-icon">↗</div>
+        </div>
+        <div class="curr-cols">
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Past Papers &amp; Exams
+            </div>
+            <ul class="curr-items">
+              <li>A Level Courses</li>
+              <li>IGCSE Mathematics</li>
+              <li>GCSE Examinations</li>
+              <li>Further Maths</li>
+            </ul>
+          </div>
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Textbooks
+            </div>
+            <ul class="curr-items">
+              <li>AQA Mathematics</li>
+              <li>A Level Mintu</li>
+              <li>A Level Maths</li>
+              <li>Edexcel Series</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canada -->
+      <div class="curr-card reveal reveal-delay-3">
+        <div class="curr-card-head">
+          <div class="curr-card-title">
+            <span class="curr-flag">🇨🇦</span>
+            <span class="curr-name">Canada</span>
+          </div>
+          <div class="curr-link-icon">↗</div>
+        </div>
+        <div class="curr-cols">
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Past Papers &amp; Exams
+            </div>
+            <ul class="curr-items">
+              <li>AMC Competitions</li>
+              <li>Polar Olympiad</li>
+              <li>Quebec Resources</li>
+              <li>Similar Textbooks</li>
+            </ul>
+          </div>
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Textbooks
+            </div>
+            <ul class="curr-items">
+              <li>Ontario Curriculum</li>
+              <li>Foundation Series</li>
+              <li>Quebec Resources P.2</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- IB Mathematics -->
+      <div class="curr-card reveal reveal-delay-4">
+        <div class="curr-card-head">
+          <div class="curr-card-title">
+            <span class="curr-flag">🌐</span>
+            <span class="curr-name">IB Mathematics</span>
+          </div>
+          <div class="curr-link-icon">↗</div>
+        </div>
+        <div class="curr-cols">
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Past Papers &amp; Exams
+            </div>
+            <ul class="curr-items">
+              <li>Math AA SL/HL</li>
+              <li>Math AI SL/HL</li>
+              <li>Online Textbooks</li>
+              <li>Extended Essay</li>
+            </ul>
+          </div>
+          <div>
+            <div class="curr-col-title">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              Textbooks
+            </div>
+            <ul class="curr-items">
+              <li>Math AA SL/HL 2019+</li>
+              <li>Math AI SL/HL 2019</li>
+              <li>Oxford IB Series</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FEATURES
+══════════════════════════════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-top reveal">
+      <span class="section-tag">Features</span>
+      <h2>전 세계 수학 자료를<br />한 곳에서 빠르게 찾아보세요</h2>
+      <p>국가별 커리큘럼을 선택하고 원하는 자료를 바로 다운로드하세요</p>
+    </div>
+
+    <div class="features-inner">
+      <!-- Feature list -->
+      <div class="feature-list reveal">
+        <div class="feature-item active" data-tab="interactive">
+          <div class="feature-item-head">
+            <div class="feature-icon">📐</div>
+            <div class="feature-title">인터랙티브 수학 교재</div>
+          </div>
+          <p class="feature-desc">
+            Desmos 연동 시각적 교육 도구와 교재를 직접 탐색하고 확인할 수 있습니다
+          </p>
+          <ul class="feature-bullets">
+            <li>AP 시리즈 전 과목</li>
+            <li>SAT 시리즈</li>
+            <li>AMC / IMC 경시대회</li>
+          </ul>
+        </div>
+
+        <div class="feature-item" data-tab="library">
+          <div class="feature-item-head">
+            <div class="feature-icon">📋</div>
+            <div class="feature-title">기출 문제 라이브러리</div>
+          </div>
+          <p class="feature-desc">
+            4,500개 이상의 실제 기출문제를 직접 PDF로 저장합니다
+          </p>
+          <ul class="feature-bullets">
+            <li>SAT / AP / A Level / IB</li>
+            <li>내신 문제 전 과목</li>
+          </ul>
+        </div>
+
+        <div class="feature-item" data-tab="competition">
+          <div class="feature-item-head">
+            <div class="feature-icon">🏆</div>
+            <div class="feature-title">시험 및 경시대회 대비</div>
+          </div>
+          <p class="feature-desc">
+            주요 수학 경시대회와 시험을 체계적으로 준비하세요
+          </p>
+          <ul class="feature-bullets">
+            <li>SAT/AP 2023–2025 최신</li>
+            <li>AMC/AIME 문제집</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tablet mockup -->
+      <div class="device-mockup reveal reveal-delay-2">
+        <div class="tablet-frame">
+          <div class="tablet-screen">
+            <div class="tablet-bar">
+              <div class="tablet-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="tablet-url-bar">
+                <svg width="11" height="11" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                mathhub.io/library
+              </div>
+            </div>
+            <div class="tablet-content">
+              <div class="tablet-subject-row">
+                <div class="t-subj active">AP Calc</div>
+                <div class="t-subj">SAT</div>
+                <div class="t-subj">IB Math</div>
+                <div class="t-subj">수능</div>
+              </div>
+              <div class="tablet-paper-list">
+                <div class="t-paper">
+                  <div class="t-paper-icon">📄</div>
+                  <div class="t-paper-info">
+                    <div class="t-paper-name">AP Calculus BC 2024</div>
+                    <div class="t-paper-meta">College Board · PDF · 2.4 MB</div>
+                  </div>
+                  <div class="t-paper-dl">↓</div>
+                </div>
+                <div class="t-paper">
+                  <div class="t-paper-icon">📄</div>
+                  <div class="t-paper-info">
+                    <div class="t-paper-name">AP Calculus AB 2023</div>
+                    <div class="t-paper-meta">College Board · PDF · 1.9 MB</div>
+                  </div>
+                  <div class="t-paper-dl">↓</div>
+                </div>
+                <div class="t-paper">
+                  <div class="t-paper-icon">📄</div>
+                  <div class="t-paper-info">
+                    <div class="t-paper-name">AP Statistics 2024</div>
+                    <div class="t-paper-meta">College Board · PDF · 1.5 MB</div>
+                  </div>
+                  <div class="t-paper-dl">↓</div>
+                </div>
+                <div class="t-paper">
+                  <div class="t-paper-icon">📄</div>
+                  <div class="t-paper-info">
+                    <div class="t-paper-name">AP Precalculus 2024</div>
+                    <div class="t-paper-meta">College Board · PDF · 2.1 MB</div>
+                  </div>
+                  <div class="t-paper-dl">↓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tablet-side-tag">MathHub</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     STATS BANNER
+══════════════════════════════════════ -->
+<section class="stats-banner">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-number" data-count="4500">0</div>
+        <div class="stat-label">기출 문제 수록</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <div class="stat-number" data-count="32">0</div>
+        <div class="stat-label">국가 및 시험 종류</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div class="stat-number" data-count="98">0</div>
+        <div class="stat-label">사용자 만족도 (%)</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div class="stat-number" data-count="12000">0</div>
+        <div class="stat-label">월간 이용자 수</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="testimonials-header reveal">
+      <span class="section-tag">Reviews</span>
+      <h2>작은 공부방부터 여러 학생이 있는 학교까지<br />모두 MathHub를 찾는 이유</h2>
+      <p>실제 사용자들의 진솔한 후기를 확인하세요</p>
+    </div>
+  </div>
+
+  <div class="testimonials-track-wrapper">
+    <div class="testimonials-track" id="testiTrack">
+      <!-- Cards set 1 -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"AP Calculus 기출문제를 이렇게 쉽게 찾을 수 있다니 정말 신기했어요. 시험 준비가 훨씬 수월해졌습니다!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#5c6bc0,#7986cb)">김</div>
+          <div>
+            <div class="testi-name">김지수</div>
+            <div class="testi-role">고3 수험생 · 서울</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"IB Math AA HL 자료를 전부 한 곳에서 찾을 수 있어 학생들에게 추천하고 있습니다. 교사로서 정말 만족스럽습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#388e3c,#66bb6a)">이</div>
+          <div>
+            <div class="testi-name">이민준</div>
+            <div class="testi-role">수학 교사 · 부산</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"SAT 수학 점제 향상에 MathHub가 큰 도움이 됐어요. 연도별 기출이 모두 있어 완벽하게 대비할 수 있었습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#e53935,#ef5350)">박</div>
+          <div>
+            <div class="testi-name">박수현</div>
+            <div class="testi-role">유학 준비생 · 인천</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"캐나다 Ontario 커리큘럼 자료까지 있어서 놀랐어요. 해외 수학 시스템 공부에 이만한 플랫폼이 없습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f57c00,#ffa726)">최</div>
+          <div>
+            <div class="testi-name">최다연</div>
+            <div class="testi-role">학원 원장 · 대전</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"AMC 10/12 준비를 MathHub로 시작했는데 체계적인 문제 분류 덕분에 집중 학습이 가능했어요."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7b1fa2,#ab47bc)">정</div>
+          <div>
+            <div class="testi-name">정현우</div>
+            <div class="testi-role">중3 수학 영재 · 경기</div>
+          </div>
+        </div>
+      </div>
+      <!-- Cards set 2 (duplicate for seamless loop) -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"학원에서 모든 반에 MathHub를 도입했어요. PDF 다운로드가 빠르고 자료 품질도 우수해 학부모 만족도가 높아졌습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00838f,#26c6da)">한</div>
+          <div>
+            <div class="testi-name">한소윤</div>
+            <div class="testi-role">수학 학원 강사 · 서울</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"IGCSE와 A Level 자료가 한 플랫폼에 있어서 영국 유학 준비가 훨씬 쉬워졌어요. 인터페이스도 깔끔합니다!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#1565c0,#42a5f5)">오</div>
+          <div>
+            <div class="testi-name">오준혁</div>
+            <div class="testi-role">영국 유학 준비생 · 서울</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"수능 수학 기출을 연도별로 정리해 볼 수 있어서 취약한 단원을 빠르게 파악할 수 있었어요."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#2e7d32,#66bb6a)">임</div>
+          <div>
+            <div class="testi-name">임채원</div>
+            <div class="testi-role">고3 수험생 · 대구</div>
+          </div>
+        </div>
+      </div>
+      <!-- Duplicate set for infinite loop -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"AP Calculus 기출문제를 이렇게 쉽게 찾을 수 있다니 정말 신기했어요. 시험 준비가 훨씬 수월해졌습니다!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#5c6bc0,#7986cb)">김</div>
+          <div>
+            <div class="testi-name">김지수</div>
+            <div class="testi-role">고3 수험생 · 서울</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"IB Math AA HL 자료를 전부 한 곳에서 찾을 수 있어 학생들에게 추천하고 있습니다. 교사로서 정말 만족스럽습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#388e3c,#66bb6a)">이</div>
+          <div>
+            <div class="testi-name">이민준</div>
+            <div class="testi-role">수학 교사 · 부산</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"SAT 수학 점제 향상에 MathHub가 큰 도움이 됐어요. 연도별 기출이 모두 있어 완벽하게 대비할 수 있었습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#e53935,#ef5350)">박</div>
+          <div>
+            <div class="testi-name">박수현</div>
+            <div class="testi-role">유학 준비생 · 인천</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"캐나다 Ontario 커리큘럼 자료까지 있어서 놀랐어요. 해외 수학 시스템 공부에 이만한 플랫폼이 없습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f57c00,#ffa726)">최</div>
+          <div>
+            <div class="testi-name">최다연</div>
+            <div class="testi-role">학원 원장 · 대전</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"AMC 10/12 준비를 MathHub로 시작했는데 체계적인 문제 분류 덕분에 집중 학습이 가능했어요."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7b1fa2,#ab47bc)">정</div>
+          <div>
+            <div class="testi-name">정현우</div>
+            <div class="testi-role">중3 수학 영재 · 경기</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"학원에서 모든 반에 MathHub를 도입했어요. PDF 다운로드가 빠르고 자료 품질도 우수해 학부모 만족도가 높아졌습니다."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00838f,#26c6da)">한</div>
+          <div>
+            <div class="testi-name">한소윤</div>
+            <div class="testi-role">수학 학원 강사 · 서울</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"IGCSE와 A Level 자료가 한 플랫폼에 있어서 영국 유학 준비가 훨씬 쉬워졌어요. 인터페이스도 깔끔합니다!"</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#1565c0,#42a5f5)">오</div>
+          <div>
+            <div class="testi-name">오준혁</div>
+            <div class="testi-role">영국 유학 준비생 · 서울</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Math<span style="color:#9fa8da">Hub</span></a>
+        <p class="footer-desc">
+          전 세계 수학 기출문제와 교재를 한 곳에서 빠르게 찾아보고 다운로드하세요. 국가별 커리큘럼을 선택하고 원하는 자료를 바로 확인할 수 있습니다.
+        </p>
+        <div class="footer-flags" title="지원 국가">
+          <span title="대한민국">🇰🇷</span>
+          <span title="미국">🇺🇸</span>
+          <span title="영국">🇬🇧</span>
+          <span title="캐나다">🇨🇦</span>
+          <span title="호주">🇦🇺</span>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">MathHub</div>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">General Details</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Support Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">커리큘럼</div>
+        <ul class="footer-links">
+          <li><a href="#">🇺🇸 USA (AP / SAT)</a></li>
+          <li><a href="#">🇬🇧 United Kingdom</a></li>
+          <li><a href="#">🇨🇦 Canada</a></li>
+          <li><a href="#">🌐 IB Mathematics</a></li>
+          <li><a href="#">🇰🇷 수능 / 내신</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MathHub. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+  // ── Mobile nav ──────────────────────────
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  hamburger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('open');
+  });
+  document.addEventListener('click', e => {
+    if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+      navLinks.classList.remove('open');
+    }
+  });
+
+  // ── Search ──────────────────────────────
+  function handleSearch(e) {
+    e.preventDefault();
+    const val = document.getElementById('heroSearchInput').value.trim();
+    if (!val) return;
+    alert(`"${val}" 검색 중입니다…\n(실제 검색 기능은 백엔드 연동 후 제공됩니다)`);
+  }
+
+  // ── Badge click ─────────────────────────
+  document.querySelectorAll('.badge').forEach(b => {
+    b.addEventListener('click', () => {
+      const label = b.textContent.trim();
+      document.getElementById('heroSearchInput').value = label;
+      document.getElementById('heroSearchInput').focus();
+    });
+  });
+
+  // ── Tablet subject tabs ──────────────────
+  document.querySelectorAll('.t-subj').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.t-subj').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // ── Feature tabs ────────────────────────
+  document.querySelectorAll('.feature-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.feature-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // ── Curriculum card links ────────────────
+  document.querySelectorAll('.curr-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.querySelector('.curr-name').textContent;
+      card.style.transform = 'scale(.98)';
+      setTimeout(() => { card.style.transform = ''; }, 200);
+    });
+  });
+
+  // ── Intersection Observer (scroll reveal) ─
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // ── Counter animation ────────────────────
+  function animateCounter(el, target, suffix = '') {
+    const duration = 1600;
+    const start    = performance.now();
+    const isLarge  = target > 999;
+    const step = ts => {
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3);
+      const value    = Math.round(eased * target);
+      el.textContent = isLarge
+        ? value.toLocaleString('ko-KR') + (suffix || '+')
+        : value + (suffix || '');
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = isLarge
+        ? target.toLocaleString('ko-KR') + (suffix || '+')
+        : target + (suffix || '');
+    };
+    requestAnimationFrame(step);
+  }
+
+  const counterObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el     = entry.target;
+          const target = parseInt(el.dataset.count, 10);
+          animateCounter(el, target);
+          counterObserver.unobserve(el);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+  document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+  // ── Progress bar animation ───────────────
+  const progressObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const fills = entry.target.querySelectorAll('.progress-fill[data-target]');
+          fills.forEach(fill => {
+            fill.style.width = fill.dataset.target + '%';
+          });
+          progressObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+  const heroCard = document.querySelector('.hero-card-main');
+  if (heroCard) progressObserver.observe(heroCard);
+
+  // ── Sticky nav background on scroll ──────
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 10) {
+      header.style.boxShadow = '0 4px 20px rgba(0,0,0,.1)';
+    } else {
+      header.style.boxShadow = '0 2px 12px rgba(0,0,0,.06)';
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>

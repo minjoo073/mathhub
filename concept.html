@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개념 완성 – MathHub</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR',
+                   'Apple SD Gothic Neo', sans-serif;
+      color: #1a1a2e;
+      background: #f5f6fa;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* ── Variables ── */
+    :root {
+      --indigo:    #5C6BC0;
+      --indigo-d:  #3949AB;
+      --indigo-dd: #283593;
+      --indigo-lt: #E8EAF6;
+      --indigo-xlt:#f0f2fd;
+      --shadow:    0 4px 20px rgba(92,107,192,.15);
+      --radius:    12px;
+      --transition:.22s ease;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ══════════════════════════════════════
+       HEADER / NAV
+    ══════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      border-bottom: 1px solid #e8eaf0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--indigo);
+      letter-spacing: -.5px;
+    }
+    .nav-logo span { color: var(--indigo-d); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .93rem;
+      font-weight: 500;
+      color: #444;
+      transition: color var(--transition);
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--indigo);
+      border-radius: 2px;
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--indigo); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active {
+      color: var(--indigo);
+      font-weight: 700;
+    }
+    .nav-links a.active::after { width: 100%; }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: #444; border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      background: linear-gradient(120deg, #dbeafe 0%, #ede9fe 100%);
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(93,107,192,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 80% 40%, rgba(139,92,246,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero h1 {
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      font-weight: 900;
+      color: #1e3a8a;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      letter-spacing: -.02em;
+    }
+    .hero p {
+      font-size: 1.08rem;
+      color: #4a5680;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ══════════════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════════════ */
+    .page-body {
+      background: #fff;
+      min-height: calc(100vh - 64px);
+    }
+    .content-wrapper {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      align-items: start;
+    }
+
+    /* ══════════════════════════════════════
+       LEFT SIDEBAR
+    ══════════════════════════════════════ */
+    .sidebar {
+      position: sticky;
+      top: 64px;
+      padding: 32px 0 32px 0;
+      border-right: 1px solid #e8eaf0;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar-level-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding-right: 20px;
+    }
+    .level-btn {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid #dde1f5;
+      background: #fff;
+      color: #666;
+      text-align: left;
+      transition: all var(--transition);
+    }
+    .level-btn:hover {
+      border-color: var(--indigo);
+      color: var(--indigo);
+    }
+    .level-btn.active {
+      background: var(--indigo-d);
+      border-color: var(--indigo-d);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(57,73,171,.3);
+    }
+
+    /* Accordion tree */
+    .accordion { padding-right: 8px; }
+    .accordion-group { margin-bottom: 4px; }
+    .accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .87rem;
+      font-weight: 600;
+      color: #333;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .accordion-header:hover { background: var(--indigo-xlt); }
+    .accordion-chevron {
+      font-size: .7rem;
+      color: #aaa;
+      transition: transform var(--transition);
+    }
+    .accordion-group.open .accordion-chevron { transform: rotate(90deg); }
+    .accordion-items {
+      display: none;
+      padding: 4px 0 4px 12px;
+    }
+    .accordion-group.open .accordion-items { display: block; }
+    .accordion-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 7px;
+      font-size: .84rem;
+      color: #555;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .accordion-item::before {
+      content: '•';
+      color: #bbb;
+      font-size: .7rem;
+      flex-shrink: 0;
+    }
+    .accordion-item:hover { background: var(--indigo-xlt); color: var(--indigo); }
+    .accordion-item.selected {
+      background: #dbeafe;
+      color: var(--indigo-d);
+      font-weight: 700;
+    }
+    .accordion-item.selected::before { color: var(--indigo); }
+
+    /* ══════════════════════════════════════
+       RIGHT CONTENT
+    ══════════════════════════════════════ */
+    .main-content {
+      padding: 32px 0 48px 36px;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .82rem;
+      color: #888;
+      margin-bottom: 24px;
+    }
+    .breadcrumb span { color: #bbb; font-size: .75rem; }
+    .breadcrumb a {
+      color: #888;
+      transition: color var(--transition);
+    }
+    .breadcrumb a:hover { color: var(--indigo); }
+    .breadcrumb .current { color: var(--indigo-d); font-weight: 600; }
+
+    /* Info box */
+    .info-box {
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+    }
+    .info-box-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .9rem;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 14px;
+    }
+    .info-box-title .icon { font-size: 1.1rem; }
+    .info-bullets { display: flex; flex-direction: column; gap: 8px; }
+    .info-bullet {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .84rem;
+      color: #0c4a6e;
+      line-height: 1.55;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .info-bullet::before {
+      content: '•';
+      color: #38bdf8;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .05em;
+    }
+
+    /* Section header */
+    .section-header {
+      margin-bottom: 20px;
+    }
+    .section-header-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: #1a1a2e;
+      letter-spacing: -.02em;
+    }
+    .section-sub {
+      font-size: .93rem;
+      color: #555;
+    }
+
+    /* Search bar */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f5f6fa;
+      border: 1.5px solid #dde1f5;
+      border-radius: 8px;
+      padding: 8px 14px;
+      gap: 8px;
+      transition: border-color var(--transition);
+      flex-shrink: 0;
+    }
+    .search-bar:focus-within {
+      border-color: var(--indigo);
+      background: #fff;
+    }
+    .search-bar svg { color: #aaa; flex-shrink: 0; }
+    .search-bar input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: .87rem;
+      color: #333;
+      width: 220px;
+    }
+    .search-bar input::placeholder { color: #aaa; }
+
+    /* Topic cards */
+    .topic-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .topic-card {
+      background: #fff;
+      border: 1.5px solid #e8eaf0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all var(--transition);
+      cursor: pointer;
+      border-left: 4px solid transparent;
+    }
+    .topic-card:hover {
+      border-left-color: var(--indigo);
+      box-shadow: 0 6px 24px rgba(92,107,192,.12);
+      transform: translateX(2px);
+    }
+    .topic-card-info { flex: 1; min-width: 0; }
+    .topic-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 5px;
+    }
+    .topic-card-desc {
+      font-size: .86rem;
+      color: #666;
+      line-height: 1.5;
+    }
+    .topic-card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--indigo);
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: .86rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), transform var(--transition);
+      flex-shrink: 0;
+    }
+    .topic-card-btn:hover {
+      background: var(--indigo-d);
+      transform: translateY(-1px);
+    }
+    .topic-card-num {
+      font-size: .78rem;
+      font-weight: 700;
+      background: var(--indigo-lt);
+      color: var(--indigo-d);
+      border-radius: 6px;
+      padding: 3px 9px;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #3949AB;
+      color: #c5cae9;
+      padding: 40px 0 24px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.5px;
+    }
+    .footer-nav {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      font-size: .87rem;
+      color: #c5cae9;
+      transition: color var(--transition);
+    }
+    .footer-nav a:hover { color: #fff; }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copyright {
+      font-size: .8rem;
+      color: #9fa8da;
+    }
+    .footer-flags {
+      display: flex;
+      gap: 8px;
+      font-size: 1.25rem;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 860px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+      }
+      .sidebar {
+        position: static;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid #e8eaf0;
+        padding: 20px 0;
+      }
+      .sidebar-level-btns {
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-right: 0;
+      }
+      .level-btn { width: auto; }
+      .accordion { padding-right: 0; }
+      .main-content { padding: 24px 0 40px; }
+      .section-header-top { flex-direction: column; align-items: flex-start; }
+      .search-bar input { width: 160px; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        background: #fff;
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid #e8eaf0;
+        box-shadow: 0 8px 20px rgba(0,0,0,.1);
+        z-index: 999;
+      }
+      .nav-hamburger { display: flex; }
+      .hero { padding: 64px 16px; }
+      .topic-card { flex-direction: column; align-items: flex-start; }
+      .topic-card-btn { align-self: flex-end; }
+      .footer-top { flex-direction: column; align-items: flex-start; }
+      .footer-nav { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER / NAV
+══════════════════════════════════════ -->
+<header>
+  <nav class="container">
+    <a href="index.html" class="nav-logo">Math<span>Hub</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="concept.html" class="active">개념 완성</a></li>
+      <li><a href="#">기출 문제</a></li>
+      <li><a href="#">문제집 &amp; 해설</a></li>
+      <li><a href="#">국가별 과정</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger" aria-label="메뉴 열기" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="container hero-content">
+    <h1>개념이 잡히면, 문제는 풀립니다</h1>
+    <p>기출과 연결된 핵심 개념을 빠르게 정리해보세요.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<div class="page-body">
+  <div class="content-wrapper">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-level-btns">
+        <button class="level-btn active" data-level="middle" onclick="switchLevel(this)">중학수학</button>
+        <button class="level-btn" data-level="high" onclick="switchLevel(this)">고등수학</button>
+        <button class="level-btn" data-level="advanced" onclick="switchLevel(this)">심화수학</button>
+      </div>
+
+      <!-- Accordion tree: 중학수학 -->
+      <div class="accordion" id="accordionMiddle">
+
+        <!-- 중학교 1학년 (expanded) -->
+        <div class="accordion-group open" id="grade1">
+          <div class="accordion-header" onclick="toggleAccordion('grade1')">
+            <span>중학교 1학년</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item selected" onclick="selectTopic(this, '수와 연산', '중학교 1학년')">수와 연산</div>
+            <div class="accordion-item" onclick="selectTopic(this, '문자와 식', '중학교 1학년')">문자와 식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '일차방정식', '중학교 1학년')">일차방정식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '좌표와 그래프', '중학교 1학년')">좌표와 그래프</div>
+          </div>
+        </div>
+
+        <!-- 중학교 2학년 (collapsed) -->
+        <div class="accordion-group" id="grade2">
+          <div class="accordion-header" onclick="toggleAccordion('grade2')">
+            <span>중학교 2학년</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '유리수와 순환소수', '중학교 2학년')">유리수와 순환소수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '일차부등식', '중학교 2학년')">일차부등식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '연립방정식', '중학교 2학년')">연립방정식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '일차함수', '중학교 2학년')">일차함수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '삼각형의 성질', '중학교 2학년')">삼각형의 성질</div>
+            <div class="accordion-item" onclick="selectTopic(this, '확률', '중학교 2학년')">확률</div>
+          </div>
+        </div>
+
+        <!-- 중학교 3학년 (collapsed) -->
+        <div class="accordion-group" id="grade3">
+          <div class="accordion-header" onclick="toggleAccordion('grade3')">
+            <span>중학교 3학년</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '제곱근과 실수', '중학교 3학년')">제곱근과 실수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '다항식의 인수분해', '중학교 3학년')">다항식의 인수분해</div>
+            <div class="accordion-item" onclick="selectTopic(this, '이차방정식', '중학교 3학년')">이차방정식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '이차함수', '중학교 3학년')">이차함수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '삼각비', '중학교 3학년')">삼각비</div>
+            <div class="accordion-item" onclick="selectTopic(this, '원의 성질', '중학교 3학년')">원의 성질</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Accordion tree: 고등수학 (hidden by default) -->
+      <div class="accordion" id="accordionHigh" style="display:none">
+        <div class="accordion-group open" id="high1">
+          <div class="accordion-header" onclick="toggleAccordion('high1')">
+            <span>수학 (공통)</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item selected" onclick="selectTopic(this, '다항식', '수학 (공통)')">다항식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '방정식과 부등식', '수학 (공통)')">방정식과 부등식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '도형의 방정식', '수학 (공통)')">도형의 방정식</div>
+            <div class="accordion-item" onclick="selectTopic(this, '집합과 명제', '수학 (공통)')">집합과 명제</div>
+          </div>
+        </div>
+        <div class="accordion-group" id="high2">
+          <div class="accordion-header" onclick="toggleAccordion('high2')">
+            <span>수학 I</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '지수함수와 로그함수', '수학 I')">지수함수와 로그함수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '삼각함수', '수학 I')">삼각함수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '수열', '수학 I')">수열</div>
+          </div>
+        </div>
+        <div class="accordion-group" id="high3">
+          <div class="accordion-header" onclick="toggleAccordion('high3')">
+            <span>수학 II</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '극한', '수학 II')">극한</div>
+            <div class="accordion-item" onclick="selectTopic(this, '미분', '수학 II')">미분</div>
+            <div class="accordion-item" onclick="selectTopic(this, '적분', '수학 II')">적분</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion tree: 심화수학 (hidden by default) -->
+      <div class="accordion" id="accordionAdvanced" style="display:none">
+        <div class="accordion-group open" id="adv1">
+          <div class="accordion-header" onclick="toggleAccordion('adv1')">
+            <span>확률과 통계</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item selected" onclick="selectTopic(this, '경우의 수', '확률과 통계')">경우의 수</div>
+            <div class="accordion-item" onclick="selectTopic(this, '확률', '확률과 통계')">확률</div>
+            <div class="accordion-item" onclick="selectTopic(this, '통계', '확률과 통계')">통계</div>
+          </div>
+        </div>
+        <div class="accordion-group" id="adv2">
+          <div class="accordion-header" onclick="toggleAccordion('adv2')">
+            <span>미적분</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '수열의 극한', '미적분')">수열의 극한</div>
+            <div class="accordion-item" onclick="selectTopic(this, '미분법', '미적분')">미분법</div>
+            <div class="accordion-item" onclick="selectTopic(this, '적분법', '미적분')">적분법</div>
+          </div>
+        </div>
+        <div class="accordion-group" id="adv3">
+          <div class="accordion-header" onclick="toggleAccordion('adv3')">
+            <span>기하</span>
+            <span class="accordion-chevron">▶</span>
+          </div>
+          <div class="accordion-items">
+            <div class="accordion-item" onclick="selectTopic(this, '이차곡선', '기하')">이차곡선</div>
+            <div class="accordion-item" onclick="selectTopic(this, '평면벡터', '기하')">평면벡터</div>
+            <div class="accordion-item" onclick="selectTopic(this, '공간도형과 공간벡터', '기하')">공간도형과 공간벡터</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── RIGHT CONTENT ── -->
+    <main class="main-content" id="mainContent">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" id="breadcrumb" aria-label="breadcrumb">
+        <a href="#">중학수학</a>
+        <span>›</span>
+        <a href="#">중학교 1학년</a>
+        <span>›</span>
+        <span class="current">수와 연산</span>
+      </nav>
+
+      <!-- Info box -->
+      <div class="info-box">
+        <div class="info-box-title">
+          <span class="icon">💡</span>
+          이 단원을 공부하기 전에 알아두면 좋은 것
+        </div>
+        <div class="info-bullets">
+          <div class="info-bullet">
+            초등 분수·소수 계산이 익숙하지 않다면 먼저 복습하세요. 유리수 단원에서 바로 연결됩니다.
+          </div>
+          <div class="info-bullet">
+            단원 순서대로 공부하는 걸 권장해요. 앞 단원 개념이 뒤 단원의 전제가 되는 경우가 많습니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section header -->
+      <div class="section-header">
+        <div class="section-header-top">
+          <h2 class="section-title" id="sectionTitle">수와 연산</h2>
+          <div class="search-bar">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" placeholder="검색어를 입력해 주세요" aria-label="개념 검색" id="topicSearch" oninput="filterCards()" />
+          </div>
+        </div>
+        <p class="section-sub" id="sectionSub">정수와 유리수의 개념을 이해하고, 사칙연산을 완벽히 익혀보세요.</p>
+      </div>
+
+      <!-- Topic cards -->
+      <div class="topic-cards" id="topicCards">
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">1. 소수와 합성수</div>
+            <div class="topic-card-desc">자연수를 약수의 개수에 따라 분류하고 거듭제곱 표현 익히기</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">2. 소인수분해</div>
+            <div class="topic-card-desc">합성수를 소수들의 곱으로 분해하여 수의 구조 파악하기</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">3. 최대공약수와 최소공배수</div>
+            <div class="topic-card-desc">1보다 큰 자연수를 오직 소수들의 곱으로만 나타내는 것</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">4. 정수와 유리수</div>
+            <div class="topic-card-desc">양수, 음수, 0의 개념과 수직선 위에서의 위치 이해하기</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">5. 절댓값과 대소관계</div>
+            <div class="topic-card-desc">원점에서의 거리 개념을 익히고 수의 크기 비교하기</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+        <div class="topic-card">
+          <div class="topic-card-info">
+            <div class="topic-card-title">6. 정수와 유리수의 사칙연산</div>
+            <div class="topic-card-desc">부호가 있는 수들의 덧셈, 뺄셈, 곱셈, 나눗셈 정복하기</div>
+          </div>
+          <button class="topic-card-btn">바로가기 ▶</button>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-logo">MathHub</div>
+      <nav class="footer-nav">
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Support Us</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copyright">© 2026 MathHub. All rights reserved.</span>
+      <div class="footer-flags" aria-label="지원 언어">
+        <span title="한국어">🇰🇷</span>
+        <span title="English (US)">🇺🇸</span>
+        <span title="English (UK)">🇬🇧</span>
+        <span title="Canada">🇨🇦</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* ── Mobile nav toggle ── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('open'); });
+
+  /* ── Accordion toggle ── */
+  function toggleAccordion(id) {
+    const group = document.getElementById(id);
+    group.classList.toggle('open');
+  }
+
+  /* ── Level switcher ── */
+  function switchLevel(btn) {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const level = btn.dataset.level;
+    document.getElementById('accordionMiddle').style.display   = level === 'middle'   ? '' : 'none';
+    document.getElementById('accordionHigh').style.display     = level === 'high'     ? '' : 'none';
+    document.getElementById('accordionAdvanced').style.display = level === 'advanced' ? '' : 'none';
+
+    /* reset to first selected item in that level */
+    const firstSelected = document.querySelector('#accordion' +
+      (level === 'middle' ? 'Middle' : level === 'high' ? 'High' : 'Advanced') +
+      ' .accordion-item.selected');
+    if (firstSelected) {
+      const grade = firstSelected.closest('.accordion-group').querySelector('.accordion-header span').textContent;
+      updateBreadcrumb(btn.textContent, grade, firstSelected.textContent.trim());
+      document.getElementById('sectionTitle').textContent = firstSelected.textContent.trim();
+    }
+  }
+
+  /* ── Topic item selection ── */
+  function selectTopic(el, topic, grade) {
+    /* deselect all items in the visible accordion */
+    const visibleAccordion = [...document.querySelectorAll('.accordion')].find(a => a.style.display !== 'none');
+    if (visibleAccordion) {
+      visibleAccordion.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('selected'));
+    }
+    el.classList.add('selected');
+    /* ensure parent accordion-group is open */
+    el.closest('.accordion-group').classList.add('open');
+    /* get level label */
+    const activeLevel = document.querySelector('.level-btn.active').textContent;
+    updateBreadcrumb(activeLevel, grade, topic);
+    document.getElementById('sectionTitle').textContent = topic;
+  }
+
+  /* ── Breadcrumb update ── */
+  function updateBreadcrumb(level, grade, topic) {
+    const bc = document.getElementById('breadcrumb');
+    bc.innerHTML = `
+      <a href="#">${level}</a>
+      <span>›</span>
+      <a href="#">${grade}</a>
+      <span>›</span>
+      <span class="current">${topic}</span>
+    `;
+  }
+
+  /* ── Card search filter ── */
+  function filterCards() {
+    const q = document.getElementById('topicSearch').value.toLowerCase();
+    document.querySelectorAll('.topic-card').forEach(card => {
+      const text = card.querySelector('.topic-card-title').textContent.toLowerCase()
+                 + card.querySelector('.topic-card-desc').textContent.toLowerCase();
+      card.style.display = text.includes(q) ? '' : 'none';
+    });
+  }
+
+  /* ── Topic card button hover via JS for extra feel ── */
+  document.querySelectorAll('.topic-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.textContent = '열기 중...';
+      setTimeout(() => { btn.textContent = '바로가기 ▶'; }, 1200);
+    });
+  });
+</script>
+</body>
+</html>
