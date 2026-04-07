@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MathHub – 문제집 &amp; 해설</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo',
+        'Noto Sans KR', sans-serif;
+      color: #1e1e2e;
+      background: #f5f7fa;
+    }
+
+    /* ── NAV ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      padding: 0 24px;
+      height: 60px;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #3949AB;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    nav { display: flex; gap: 28px; }
+    nav a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #4b5563;
+      padding-bottom: 3px;
+      transition: color .15s;
+    }
+    nav a:hover { color: #3949AB; }
+    nav a.active {
+      color: #3949AB;
+      font-weight: 700;
+      border-bottom: 2.5px solid #3949AB;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(120deg, #dbeafe 0%, #ede9fe 100%);
+      text-align: center;
+      padding: 100px 24px;
+    }
+    .hero h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: #4338ca;
+      font-weight: 500;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e1e2e;
+      margin-bottom: 16px;
+    }
+
+    /* ── FILTER CARD ── */
+    .filter-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 14px;
+      padding: 28px 28px 20px;
+      margin-bottom: 10px;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .filter-label {
+      min-width: 80px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      padding-top: 6px;
+    }
+    .filter-controls { flex: 1; }
+
+    /* Radio */
+    .radio-group { display: flex; gap: 18px; }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+    .radio-group input[type="radio"] { display: none; }
+    .radio-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .15s;
+    }
+    .radio-group input[type="radio"]:checked + .radio-dot {
+      border-color: #3949AB;
+      background: #3949AB;
+    }
+    .radio-group input[type="radio"]:checked + .radio-dot::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* Pills */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      padding: 5px 15px;
+      border-radius: 20px;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all .15s;
+      user-select: none;
+    }
+    .pill:hover { border-color: #3949AB; color: #3949AB; }
+    .pill.active {
+      background: #3949AB;
+      border-color: #3949AB;
+      color: #fff;
+    }
+    .pill-row2 { margin-top: 8px; }
+
+    /* Chips */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #e8eaf6;
+      color: #3949AB;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .chip-remove {
+      background: none;
+      border: none;
+      color: #5C6BC0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 0 0 1px;
+      font-weight: 700;
+    }
+    .chip-remove:hover { color: #1a237e; }
+
+    /* Search row */
+    .search-row { display: flex; gap: 10px; }
+    .search-input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .search-input:focus { border-color: #3949AB; }
+    .btn-search {
+      padding: 9px 22px;
+      background: #3949AB;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-search:hover { background: #303f9f; }
+
+    /* Filter actions */
+    .filter-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .btn-reset {
+      background: none;
+      border: none;
+      color: #5C6BC0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-reset:hover { color: #1a237e; }
+    .btn-collapse {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 0.83rem;
+      cursor: pointer;
+    }
+    .btn-collapse:hover { color: #374151; }
+
+    /* ── RESULTS ── */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .results-count {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    .sort-group { display: flex; gap: 12px; }
+    .sort-btn {
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding-bottom: 2px;
+      font-weight: 500;
+      transition: color .15s;
+    }
+    .sort-btn:hover { color: #3949AB; }
+    .sort-btn.active {
+      color: #3949AB;
+      font-weight: 700;
+      border-bottom: 2px solid #3949AB;
+    }
+
+    hr { border: none; border-top: 1px solid #e5e7eb; margin-bottom: 22px; }
+
+    /* ── BOOK GRID ── */
+    .book-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .book-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .book-card:hover {
+      box-shadow: 0 8px 24px rgba(60,72,180,.13);
+      transform: translateY(-2px);
+    }
+
+    /* Cover */
+    .book-cover {
+      width: 80px;
+      min-width: 80px;
+      height: 110px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      text-shadow: 0 1px 3px rgba(0,0,0,.3);
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    }
+    .cover-1 { background: linear-gradient(145deg, #e53935 0%, #f48fb1 100%); }
+    .cover-2 { background: linear-gradient(145deg, #b71c1c 0%, #78909c 100%); }
+    .cover-3 { background: linear-gradient(145deg, #1565c0 0%, #e3f2fd 100%); }
+    .cover-4 { background: linear-gradient(145deg, #1b5e20 0%, #26a69a 100%); }
+    .cover-5 { background: linear-gradient(145deg, #e65100 0%, #ffcc02 100%); }
+    .cover-6 { background: linear-gradient(145deg, #00695c 0%, #4dd0e1 100%); }
+
+    /* Book info */
+    .book-info { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      width: fit-content;
+    }
+    .badge-green  { background: #4CAF50; }
+    .badge-orange { background: #FF9800; }
+    .badge-red    { background: #F44336; }
+    .badge-blue   { background: #2196F3; }
+
+    .book-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e1e2e;
+      line-height: 1.35;
+    }
+    .book-meta {
+      font-size: 0.78rem;
+      color: #9ca3af;
+    }
+    .book-actions { display: flex; gap: 8px; margin-top: auto; }
+    .btn-primary {
+      padding: 6px 13px;
+      background: #3949AB;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-primary:hover { background: #303f9f; }
+    .btn-outline {
+      padding: 6px 13px;
+      background: #fff;
+      color: #3949AB;
+      border: 1.5px solid #3949AB;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .btn-outline:hover { background: #e8eaf6; }
+
+    /* ── LOAD MORE ── */
+    .load-more-wrap { text-align: center; margin-top: 28px; }
+    .btn-more {
+      width: 100%;
+      max-width: 340px;
+      padding: 12px 0;
+      background: #fff;
+      color: #6b7280;
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-more:hover { border-color: #3949AB; color: #3949AB; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #3949AB;
+      color: #fff;
+      padding: 36px 24px 28px;
+      margin-top: 60px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .footer-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .footer-links a {
+      color: #c5cae9;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: #fff; }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: #9fa8da;
+    }
+
+    /* ── COLLAPSED STATE ── */
+    .filter-body { overflow: hidden; transition: max-height .3s ease; }
+    .filter-body.collapsed { max-height: 0 !important; }
+
+    /* placeholder cards */
+    .placeholder-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      opacity: .7;
+    }
+    .ph-cover {
+      width: 80px;
+      min-width: 80px;
+      height: 110px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #c5cae9, #e8eaf6);
+    }
+    .ph-lines { flex: 1; display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+    .ph-line {
+      height: 14px;
+      background: #e8eaf6;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 700px) {
+      .book-grid { grid-template-columns: 1fr; }
+      .nav-inner { gap: 18px; }
+      nav { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="nav-inner">
+    <a href="#" class="logo">MathHub</a>
+    <nav>
+      <a href="concept.html">개념 완성</a>
+      <a href="exam.html">기출 문제</a>
+      <a href="workbook.html" class="active">문제집 &amp; 해설</a>
+      <a href="#">국가별 과정</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <h1>문제집 선택도 전략입니다.</h1>
+  <p>핵심 개념과 풀이 과정을 함께 제공합니다</p>
+</section>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+
+  <p class="section-title">문제집 &amp; 해설</p>
+
+  <!-- ── FILTER CARD ── -->
+  <div class="filter-card">
+    <div id="filter-body" class="filter-body" style="max-height: 900px;">
+
+      <!-- Row 1 · 학급 -->
+      <div class="filter-row">
+        <span class="filter-label">학급</span>
+        <div class="filter-controls">
+          <div class="radio-group" id="radio-group">
+            <label>
+              <input type="radio" name="grade" value="중등" checked>
+              <span class="radio-dot"></span>
+              중등
+            </label>
+            <label>
+              <input type="radio" name="grade" value="고등">
+              <span class="radio-dot"></span>
+              고등
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2 · 교재 등급 -->
+      <div class="filter-row">
+        <span class="filter-label">교재 등급</span>
+        <div class="filter-controls">
+          <div class="pill-group" id="level-pills">
+            <span class="pill" data-group="level" data-val="초급">초급</span>
+            <span class="pill" data-group="level" data-val="중급">중급</span>
+            <span class="pill" data-group="level" data-val="상급">상급</span>
+            <span class="pill" data-group="level" data-val="수능">수능</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3 · 출판사 -->
+      <div class="filter-row">
+        <span class="filter-label">출판사</span>
+        <div class="filter-controls">
+          <div class="pill-group" id="publisher-pills">
+            <span class="pill" data-group="publisher" data-val="전체">전체</span>
+            <span class="pill active" data-group="publisher" data-val="좋은책신사고">좋은책신사고</span>
+            <span class="pill" data-group="publisher" data-val="비상교육">비상교육</span>
+            <span class="pill" data-group="publisher" data-val="디딤돌">디딤돌</span>
+            <span class="pill" data-group="publisher" data-val="지학사">지학사</span>
+            <span class="pill" data-group="publisher" data-val="수경">수경</span>
+          </div>
+          <div class="pill-group pill-row2" id="publisher-pills-2">
+            <span class="pill" data-group="publisher" data-val="개념원리">개념원리</span>
+            <span class="pill" data-group="publisher" data-val="에이급">에이급</span>
+            <span class="pill active" data-group="publisher" data-val="천재교육">천재교육</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4 · 출간연도 -->
+      <div class="filter-row">
+        <span class="filter-label">출간연도</span>
+        <div class="filter-controls">
+          <div class="pill-group" id="year-pills">
+            <span class="pill" data-group="year" data-val="2025">2025</span>
+            <span class="pill" data-group="year" data-val="2026">2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5 · 검색 -->
+      <div class="filter-row">
+        <span class="filter-label">검색</span>
+        <div class="filter-controls">
+          <div class="chip-row" id="chip-row">
+            <!-- chips inserted by JS -->
+          </div>
+          <div class="search-row">
+            <input class="search-input" type="text" id="search-input" placeholder="검색어를 입력해 주세요" />
+            <button class="btn-search" onclick="doSearch()">검색</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /filter-body -->
+  </div><!-- /filter-card -->
+
+  <!-- Filter action row -->
+  <div class="filter-actions">
+    <button class="btn-reset" onclick="resetFilters()">↺ 초기화</button>
+    <button class="btn-collapse" id="collapse-btn" onclick="toggleCollapse()">검색 옵션 접기 ⓘ</button>
+  </div>
+
+  <!-- ── RESULTS HEADER ── -->
+  <div class="results-header">
+    <span class="results-count">전체 125개 | 10개</span>
+    <div class="sort-group">
+      <button class="sort-btn active" onclick="setSort(this)">최신순</button>
+      <button class="sort-btn" onclick="setSort(this)">다운로드순</button>
+      <button class="sort-btn" onclick="setSort(this)">인기순</button>
+    </div>
+  </div>
+  <hr />
+
+  <!-- ── BOOK GRID ── -->
+  <div class="book-grid" id="book-grid">
+
+    <!-- Card 1 -->
+    <div class="book-card">
+      <div class="book-cover cover-1">쎈</div>
+      <div class="book-info">
+        <span class="badge badge-green">기초</span>
+        <p class="book-title">쎈 중등 수학</p>
+        <p class="book-meta">좋은책신사고 | 2025년 09월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="book-card">
+      <div class="book-cover cover-2">쎈</div>
+      <div class="book-info">
+        <span class="badge badge-orange">중급</span>
+        <p class="book-title">쎈 고등 대수</p>
+        <p class="book-meta">좋은책신사고 | 2025년 11월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="book-card">
+      <div class="book-cover cover-3" style="font-size:.8rem; padding: 6px; letter-spacing:0;">All 100<br>🏆</div>
+      <div class="book-info">
+        <span class="badge badge-red">상급</span>
+        <p class="book-title">올백 기출문제집 수학 중 3-1 중간고사</p>
+        <p class="book-meta">천재교육 | 2020년 09월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="book-card">
+      <div class="book-cover cover-4" style="font-size:.75rem; padding:6px;">EBS<br>수능특강</div>
+      <div class="book-info">
+        <span class="badge badge-orange">중급</span>
+        <p class="book-title">EBS 수능특강 수학영역 확률과 통계</p>
+        <p class="book-meta">한국교육방송공사(EBS) | 2025년 11월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="book-card">
+      <div class="book-cover cover-5" style="font-size:.9rem; letter-spacing:1px;">KICK</div>
+      <div class="book-info">
+        <span class="badge badge-blue">수능</span>
+        <p class="book-title">메가스터디 수능수학 킥(KICK) 수학-2</p>
+        <p class="book-meta">메가스터디북스 | 2021년 11월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="book-card">
+      <div class="book-cover cover-6" style="font-size:.75rem; padding:6px;">EBS<br>수능특강</div>
+      <div class="book-info">
+        <span class="badge badge-orange">중급</span>
+        <p class="book-title">EBS 수능특강 수학영역 확률과 통계</p>
+        <p class="book-meta">좋은책신사고 | 2025년 11월</p>
+        <div class="book-actions">
+          <button class="btn-primary">📄 바로가기</button>
+          <button class="btn-outline">↓ PDF 다운</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /book-grid -->
+
+  <!-- ── LOAD MORE ── -->
+  <div class="load-more-wrap">
+    <button class="btn-more" id="more-btn" onclick="loadMore()">더보기</button>
+  </div>
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">MathHub</span>
+    <div class="footer-links">
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Support Us</a>
+    </div>
+    <p class="footer-copy">© 2026 MathHub. All rights reserved. &nbsp; 🇰🇷 🇺🇸 🇬🇧 🇨🇦</p>
+  </div>
+</footer>
+
+<!-- ══════════ SCRIPT ══════════ -->
+<script>
+  /* ─── State ─── */
+  const state = {
+    grade: '중등',
+    level: null,
+    publishers: new Set(['좋은책신사고', '천재교육']),
+    years: new Set(),
+  };
+
+  /* ─── Chip rendering ─── */
+  function renderChips() {
+    const row = document.getElementById('chip-row');
+    row.innerHTML = '';
+
+    // Grade chip
+    addChip(row, state.grade, () => {
+      // toggling grade chip just shows both unchecked – reset to default
+      state.grade = '중등';
+      document.querySelector('input[name="grade"][value="중등"]').checked = true;
+      renderChips();
+    });
+
+    // Publisher chips
+    state.publishers.forEach(pub => {
+      addChip(row, pub, () => {
+        state.publishers.delete(pub);
+        // uncheck pill
+        document.querySelectorAll('[data-group="publisher"][data-val="' + pub + '"]')
+          .forEach(p => p.classList.remove('active'));
+        renderChips();
+      });
+    });
+  }
+
+  function addChip(container, label, onRemove) {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.innerHTML = label + ' <button class="chip-remove" title="제거">×</button>';
+    chip.querySelector('.chip-remove').addEventListener('click', onRemove);
+    container.appendChild(chip);
+  }
+
+  /* ─── Radio (학급) ─── */
+  document.querySelectorAll('input[name="grade"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      state.grade = radio.value;
+      renderChips();
+    });
+  });
+
+  /* ─── Level pills (single-select) ─── */
+  document.querySelectorAll('[data-group="level"]').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('[data-group="level"]').forEach(p => p.classList.remove('active'));
+      pill.classList.toggle('active');
+      state.level = pill.classList.contains('active') ? pill.dataset.val : null;
+    });
+  });
+
+  /* ─── Publisher pills (multi-select) ─── */
+  function getAllPublisherPills() {
+    return document.querySelectorAll('[data-group="publisher"]');
+  }
+
+  getAllPublisherPills().forEach(pill => {
+    pill.addEventListener('click', () => {
+      const val = pill.dataset.val;
+      if (val === '전체') {
+        state.publishers.clear();
+        getAllPublisherPills().forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      } else {
+        // remove "전체" active if selecting specific
+        document.querySelector('[data-val="전체"]')?.classList.remove('active');
+        if (pill.classList.contains('active')) {
+          pill.classList.remove('active');
+          state.publishers.delete(val);
+        } else {
+          pill.classList.add('active');
+          state.publishers.add(val);
+        }
+      }
+      renderChips();
+    });
+  });
+
+  /* ─── Year pills (multi-select) ─── */
+  document.querySelectorAll('[data-group="year"]').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const val = pill.dataset.val;
+      if (pill.classList.contains('active')) {
+        pill.classList.remove('active');
+        state.years.delete(val);
+      } else {
+        pill.classList.add('active');
+        state.years.add(val);
+      }
+    });
+  });
+
+  /* ─── Reset ─── */
+  function resetFilters() {
+    state.grade = '중등';
+    state.level = null;
+    state.publishers = new Set(['좋은책신사고', '천재교육']);
+    state.years = new Set();
+
+    document.querySelector('input[name="grade"][value="중등"]').checked = true;
+
+    document.querySelectorAll('[data-group="level"]').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('[data-group="publisher"]').forEach(p => {
+      p.classList.remove('active');
+      if (p.dataset.val === '좋은책신사고' || p.dataset.val === '천재교육') {
+        p.classList.add('active');
+      }
+    });
+    document.querySelectorAll('[data-group="year"]').forEach(p => p.classList.remove('active'));
+    document.getElementById('search-input').value = '';
+    renderChips();
+  }
+
+  /* ─── Search ─── */
+  function doSearch() {
+    const val = document.getElementById('search-input').value.trim();
+    if (val) {
+      alert('검색어: ' + val);
+    }
+  }
+
+  /* ─── Sort ─── */
+  function setSort(btn) {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ─── Collapse ─── */
+  let collapsed = false;
+  function toggleCollapse() {
+    const body = document.getElementById('filter-body');
+    const btn = document.getElementById('collapse-btn');
+    collapsed = !collapsed;
+    if (collapsed) {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        body.classList.add('collapsed');
+      });
+      btn.textContent = '검색 옵션 펼치기 ⓘ';
+    } else {
+      body.classList.remove('collapsed');
+      body.style.maxHeight = '900px';
+      btn.textContent = '검색 옵션 접기 ⓘ';
+    }
+  }
+
+  /* ─── Load more ─── */
+  let loading = false;
+  function loadMore() {
+    if (loading) return;
+    loading = true;
+    const btn = document.getElementById('more-btn');
+    btn.textContent = '추가 로딩 중...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      const grid = document.getElementById('book-grid');
+
+      const cards = [
+        {
+          coverClass: 'cover-1',
+          coverText: '개념원리',
+          badge: 'badge-green',
+          badgeText: '기초',
+          title: '개념원리 수학 중 2-2',
+          meta: '개념원리 | 2025년 08월',
+        },
+        {
+          coverClass: 'cover-5',
+          coverText: '에이급',
+          badge: 'badge-red',
+          badgeText: '상급',
+          title: '에이급 수학 고등 수학(상)',
+          meta: '에이급출판사 | 2025년 03월',
+        },
+      ];
+
+      cards.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+          <div class="book-cover ${c.coverClass}" style="font-size:.85rem;">${c.coverText}</div>
+          <div class="book-info">
+            <span class="badge ${c.badge}">${c.badgeText}</span>
+            <p class="book-title">${c.title}</p>
+            <p class="book-meta">${c.meta}</p>
+            <div class="book-actions">
+              <button class="btn-primary">📄 바로가기</button>
+              <button class="btn-outline">↓ PDF 다운</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      btn.textContent = '더보기';
+      btn.disabled = false;
+      loading = false;
+    }, 900);
+  }
+
+  /* ─── Init ─── */
+  renderChips();
+</script>
+</body>
+</html>
