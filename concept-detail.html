@@ -15,51 +15,100 @@
     }
 
     /* ── NAV ── */
-    nav {
+    header {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
       background: #fff;
-      border-bottom: 1px solid #e8eaf6;
-      box-shadow: 0 1px 4px rgba(92,107,192,.08);
+      border-bottom: 1px solid #e8eaf0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
     }
-    .nav-inner {
+    nav {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 40px;
       display: flex;
       align-items: center;
-      height: 60px;
-      gap: 32px;
+      justify-content: space-between;
+      height: 64px;
     }
-    .logo {
-      font-size: 1.35rem;
+    .nav-logo {
+      font-size: 1.5rem;
       font-weight: 800;
-      color: #3949AB;
+      color: #5C6BC0;
       letter-spacing: -.5px;
       text-decoration: none;
-      flex-shrink: 0;
     }
+    .nav-logo span { color: #3949AB; }
     .nav-links {
       display: flex;
-      gap: 4px;
+      gap: 32px;
+      align-items: center;
       list-style: none;
+      padding: 0; margin: 0;
     }
     .nav-links a {
-      display: block;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: .92rem;
+      font-size: .93rem;
       font-weight: 500;
-      color: #555;
+      color: #444;
       text-decoration: none;
-      transition: background .15s, color .15s;
+      transition: color .2s;
+      position: relative;
+      padding-bottom: 2px;
     }
-    .nav-links a:hover { background: #e8eaf6; color: #3949AB; }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: #5C6BC0;
+      border-radius: 2px;
+      transition: width .2s;
+    }
+    .nav-links a:hover { color: #5C6BC0; }
+    .nav-links a:hover::after { width: 100%; }
     .nav-links a.active {
-      background: #e8eaf6;
       color: #3949AB;
       font-weight: 700;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: #3949AB;
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #444;
+      border-radius: 2px;
+      transition: .2s;
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px; left: 0; right: 0;
+        background: #fff;
+        flex-direction: column;
+        gap: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid #e8eaf0;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        z-index: 999;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { width: 100%; }
+      .nav-links a { padding: 12px 40px; display: block; }
+      .nav-links a::after { display: none; }
     }
 
     /* ── HERO ── */
@@ -460,17 +509,20 @@
 <body>
 
 <!-- ═══════════════ NAV ═══════════════ -->
-<nav>
-  <div class="nav-inner">
-    <a class="logo" href="index.html">MathHub</a>
-    <ul class="nav-links">
+<header>
+  <nav>
+    <a href="index.html" class="nav-logo">Math<span>Hub</span></a>
+    <ul class="nav-links" id="navLinks">
       <li><a href="concept.html" class="active">개념 완성</a></li>
       <li><a href="exam.html">기출 문제</a></li>
       <li><a href="workbook.html">문제집 &amp; 해설</a></li>
       <li><a href="global.html">국가별 과정</a></li>
     </ul>
-  </div>
-</nav>
+    <div class="nav-hamburger" id="hamburger" aria-label="메뉴 열기" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+</header>
 
 <!-- ═══════════════ HERO ═══════════════ -->
 <section class="hero">
@@ -707,6 +759,12 @@
 </footer>
 
 <script>
+  /* ── Hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('open'); });
+
   /* ── Accordion ── */
   function toggleAccordion(header) {
     const subList = header.nextElementSibling;

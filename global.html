@@ -15,62 +15,101 @@
       background: #fff;
     }
 
-    /* ─── HEADER ─────────────────────────────────────────── */
+    /* ── NAV ── */
     header {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
       background: #fff;
       border-bottom: 1px solid #e8eaf0;
-      height: 64px;
-      display: flex;
-      align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
     }
-
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 40px;
-    }
-
-    .logo {
-      font-size: 22px;
-      font-weight: 800;
-      color: #3949AB;
-      text-decoration: none;
-      letter-spacing: -0.5px;
-      white-space: nowrap;
-    }
-
     nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
       display: flex;
       align-items: center;
-      gap: 4px;
-      margin-left: auto;
+      justify-content: space-between;
+      height: 64px;
     }
-
-    nav a {
+    .nav-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #5C6BC0;
+      letter-spacing: -.5px;
       text-decoration: none;
-      color: #555;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 6px;
-      transition: color 0.2s, background 0.2s;
-      white-space: nowrap;
     }
-
-    nav a:hover { color: #3949AB; background: #ede7f6; }
-
-    nav a.active {
+    .nav-logo span { color: #3949AB; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      list-style: none;
+      padding: 0; margin: 0;
+    }
+    .nav-links a {
+      font-size: .93rem;
+      font-weight: 500;
+      color: #444;
+      text-decoration: none;
+      transition: color .2s;
+      position: relative;
+      padding-bottom: 2px;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: #5C6BC0;
+      border-radius: 2px;
+      transition: width .2s;
+    }
+    .nav-links a:hover { color: #5C6BC0; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active {
       color: #3949AB;
       font-weight: 700;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    }
+    .nav-links a.active::after {
+      width: 100%;
+      background: #3949AB;
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #444;
+      border-radius: 2px;
+      transition: .2s;
+    }
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px; left: 0; right: 0;
+        background: #fff;
+        flex-direction: column;
+        gap: 0;
+        padding: 12px 0;
+        border-bottom: 1px solid #e8eaf0;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        z-index: 999;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { width: 100%; }
+      .nav-links a { padding: 12px 40px; display: block; }
+      .nav-links a::after { display: none; }
     }
 
     /* ─── HERO ─────────────────────────────────────────────── */
@@ -532,15 +571,18 @@
 
 <!-- ─── HEADER ─────────────────────────────────────────────── -->
 <header>
-  <div class="nav-inner">
-    <a href="index.html" class="logo">MathHub</a>
-    <nav>
-      <a href="concept.html">개념 완성</a>
-      <a href="exam.html">기출 문제</a>
-      <a href="workbook.html">문제집 &amp; 해설</a>
-      <a href="global.html" class="active">국가별 과정</a>
-    </nav>
-  </div>
+  <nav>
+    <a href="index.html" class="nav-logo">Math<span>Hub</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="concept.html">개념 완성</a></li>
+      <li><a href="exam.html">기출 문제</a></li>
+      <li><a href="workbook.html">문제집 &amp; 해설</a></li>
+      <li><a href="global.html" class="active">국가별 과정</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger" aria-label="메뉴 열기" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
 </header>
 
 <!-- ─── HERO ──────────────────────────────────────────────────── -->
@@ -817,6 +859,12 @@
 <div class="toast" id="toast">준비 중입니다</div>
 
 <script>
+  /* ── Hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('open'); });
+
   /* ─── COURSE DATA ───────────────────────────────────────── */
   const courseData = {
     geometry: [
