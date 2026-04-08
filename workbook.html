@@ -15,44 +15,42 @@
     }
 
     /* ── NAV ── */
-    header {
+    nav {
       position: sticky;
       top: 0;
       z-index: 100;
       background: #fff;
-      border-bottom: 1px solid #e5e7eb;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
-    }
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
+      border-bottom: 1px solid #e0e0e0;
       display: flex;
       align-items: center;
-      gap: 40px;
-      padding: 0 24px;
+      justify-content: space-between;
+      padding: 0 40px;
       height: 60px;
     }
-    .logo {
-      font-size: 1.35rem;
+    .nav-logo {
+      font-size: 1.3rem;
       font-weight: 800;
       color: #3949AB;
       text-decoration: none;
       letter-spacing: -0.5px;
     }
-    nav { display: flex; gap: 28px; }
-    nav a {
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
       text-decoration: none;
       font-size: 0.9rem;
-      font-weight: 500;
-      color: #4b5563;
-      padding-bottom: 3px;
-      transition: color .15s;
+      color: #444;
+      padding-bottom: 4px;
+      transition: color .2s;
     }
-    nav a:hover { color: #3949AB; }
-    nav a.active {
+    .nav-links a:hover { color: #3949AB; }
+    .nav-links a.active {
       color: #3949AB;
       font-weight: 700;
-      border-bottom: 2.5px solid #3949AB;
+      border-bottom: 2px solid #3949AB;
     }
 
     /* ── HERO ── */
@@ -462,17 +460,15 @@
 <body>
 
 <!-- ══════════ HEADER ══════════ -->
-<header>
-  <div class="nav-inner">
-    <a href="#" class="logo">MathHub</a>
-    <nav>
-      <a href="concept.html">개념 완성</a>
-      <a href="exam.html">기출 문제</a>
-      <a href="workbook.html" class="active">문제집 &amp; 해설</a>
-      <a href="global.html">국가별 과정</a>
-    </nav>
-  </div>
-</header>
+<nav>
+  <a href="index.html" class="nav-logo">MathHub</a>
+  <ul class="nav-links">
+    <li><a href="concept.html">개념 완성</a></li>
+    <li><a href="exam.html">기출 문제</a></li>
+    <li><a href="workbook.html" class="active">문제집 &amp; 해설</a></li>
+    <li><a href="global.html">국가별 과정</a></li>
+  </ul>
+</nav>
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero">
